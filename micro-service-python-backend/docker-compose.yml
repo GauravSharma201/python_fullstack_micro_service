@@ -1,0 +1,225 @@
+# version: "3.8" # You can remove this line or update since version key is deprecated warning
+
+# services:
+#   gateway:
+#     build:
+#       context: .
+#       dockerfile: gateway/Dockerfile
+#     ports:
+#       - "8000:8000"
+#     environment:
+#       - AUTH_SERVICE_URL=http://auth-service:8001
+#       - TASK_SERVICE_URL=http://task-service:8002
+#       - UI_SERVICE_URL=http://ui-service:8003
+#       - NOTIFICATION_SERVICE_URL=http://notification-service:8004
+#       # other env vars as needed
+#     depends_on:
+#       - auth-service
+#       - task-service
+#       - ui-service
+#       - notification-service
+#       - redis
+#       - rabbitmq
+#       - postgres
+
+#   auth-service:
+#     build:
+#       context: .
+#       dockerfile: auth-service/Dockerfile
+#     ports:
+#       - "8001:8001"
+#     environment:
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=password
+#       - POSTGRES_DB=backend_db
+#       - REDIS_URL=redis://redis:6379
+#       - JWT_SECRET=your-secret-key
+#       # other env vars
+#     depends_on:
+#       - postgres
+#       - redis
+
+#   task-service:
+#     build:
+#       context: .
+#       dockerfile: task-service/Dockerfile
+#     ports:
+#       - "8002:8002"
+#     environment:
+#       - REDIS_URL=redis://redis:6379
+#       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+#       # other env vars
+#     depends_on:
+#       - redis
+#       - rabbitmq
+
+#   ui-service:
+#     build:
+#       context: .
+#       dockerfile: ui-service/Dockerfile
+#     ports:
+#       - "8003:8003"
+#     environment:
+#       - AUTH_SERVICE_URL=http://auth-service:8001
+#       # other env vars
+#     depends_on:
+#       - auth-service
+
+#   notification-service:
+#     build:
+#       context: .
+#       dockerfile: notification-service/Dockerfile
+#     ports:
+#       - "8004:8004"
+#     environment:
+#       - SMTP_USER=your-email@gmail.com
+#       - SMTP_PASSWORD=your-gmail-app-password
+#       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+#       # other env vars
+#     depends_on:
+#       - rabbitmq
+
+#   redis:
+#     image: redis:7-alpine
+#     ports:
+#       - "6379:6379"
+
+#   rabbitmq:
+#     image: rabbitmq:3-management-alpine
+#     ports:
+#       - "5672:5672"
+#       - "15672:15672"
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+
+#   postgres:
+#     image: postgres:15-alpine
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: backend_db
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:
+
+
+
+# Note: The 'version' key is deprecated in newer Docker Compose versions. 
+# You can remove it or update to Compose V2 format if you want.
+
+# Use indentation carefully: YAML is indentation-sensitive.
+
+services:
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8000:8000"       # Expose only gateway port externally to host
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8001
+      - TASK_SERVICE_URL=http://task-service:8002
+      - UI_SERVICE_URL=http://ui-service:8003
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8004
+      # Add other environment variables here as needed
+    depends_on:
+      - auth-service
+      - task-service
+      - ui-service
+      - notification-service
+      - redis
+      - rabbitmq
+      - postgres
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    # Do NOT expose port to host unless needed for debugging/internal direct access
+    # ports:
+    #   - "8001:8001"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=backend_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-secret-key
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/backend_db
+      # Add any other env vars your auth-service needs
+    depends_on:
+      - postgres
+      - redis
+
+  task-service:
+    build:
+      context: .
+      dockerfile: task-service/Dockerfile
+    # ports:
+    #   - "8002:8002"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      # Other environment variables
+    depends_on:
+      - redis
+      - rabbitmq
+
+  ui-service:
+    build:
+      context: .
+      dockerfile: ui-service/Dockerfile
+    # ports:
+    #   - "8003:8003"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8001
+      # Other environment variables
+    depends_on:
+      - auth-service
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    # ports:
+    #   - "8004:8004"
+    environment:
+      - SMTP_USER=your-email@gmail.com
+      - SMTP_PASSWORD=your-gmail-app-password
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      # Other env vars
+    depends_on:
+      - rabbitmq
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: backend_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
