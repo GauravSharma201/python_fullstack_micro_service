@@ -1,5 +1,6 @@
 from celery import current_task
-from .celery_app import celery_app
+from celery_app import celery_app
+
 import time
 import requests
 import os
