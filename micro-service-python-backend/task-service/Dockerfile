@@ -15,7 +15,9 @@ COPY shared ./shared
 # Copy service code into /app
 COPY task-service/. .
 
-ENV PYTHONPATH="${PYTHONPATH}:/app/shared"
+# ENV PYTHONPATH="${PYTHONPATH}:/app/shared"
+ENV PYTHONPATH="${PYTHONPATH}:/app:/app/shared"
+
 
 # The following three lines can/should be customized for each service:
 # Replace 800X with the correct port for this service
