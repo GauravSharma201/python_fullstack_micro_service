@@ -1,5 +1,6 @@
 -- Create database if it doesn't exist
-SELECT 'CREATE DATABASE backend_db' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'backend_db');
+-- Create database manually, do not create DB from this ( commented ) script.
+-- SELECT 'CREATE DATABASE backend_db' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'backend_db');
 
 -- Connect to the database
 \c backend_db;

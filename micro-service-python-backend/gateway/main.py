@@ -8,7 +8,7 @@ import json
 import os
 
 app = FastAPI(title="API Gateway", version="1.0.0")
-
+environment = os.getenv('ENV','dev')
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -22,13 +22,21 @@ app.add_middleware(
 redis_client = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
 
 # Service URLs
-SERVICES = {
-    "auth": "http://auth-service:8001",
-    "tasks": "http://task-service:8002",
-    "ui": "http://ui-service:8003",
-    "notifications": "http://notification-service:8004"
-}
-
+if environment == 'prod':
+    SERVICES = {
+        "auth": "http://auth-service:8001",
+        "tasks": "http://task-service:8002",
+        "ui": "http://ui-service:8003",
+        "notifications": "http://notification-service:8004"
+    }
+else:
+    host='localhost'
+    SERVICES = {
+        "auth": f"http://{host}:8001",
+        "tasks": f"http://{host}:8002",
+        "ui": f"http://{host}:8003",
+        "notifications": f"http://{host}:8004"
+    }
 async def forward_request(service_url: str, path: str, method: str, headers: dict, body: bytes = None):
     async with httpx.AsyncClient() as client:
         url = f"{service_url}{path}"

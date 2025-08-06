@@ -13,7 +13,9 @@ app = FastAPI(title="UI Service", version="1.0.0")
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8001")
+environment = os.getenv('ENV')
+# AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://auth-service:8001")
+AUTH_SERVICE_URL = "http://localhost:8001" if environment=='dev' else  "http://auth-service:8001"
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):

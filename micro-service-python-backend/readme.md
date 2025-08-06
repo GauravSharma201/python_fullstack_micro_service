@@ -902,3 +902,10 @@ CMD ["python", "main.py"]
 10. **Modern Stack**: FastAPI, Celery, Redis, PostgreSQL
 
 This architecture provides a solid foundation for a production-ready Python backend with all requested features!
+
+## creating database with postgres
+
+```bash
+
+CREATE DATABASE my_DB
+```

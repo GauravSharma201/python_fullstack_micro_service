@@ -1,11 +1,13 @@
 # task-service/main.py
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+from fastapi import FastAPI, Depends
+# HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional
-# import sys
-# import os
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# from pydantic import BaseModel
+# from typing import Optional
+from data_validation import TaskCreate,TaskStatus
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from shared.database import get_db, engine
 from shared.models import Task, Base
@@ -16,15 +18,15 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Service", version="1.0.0")
 
-class TaskCreate(BaseModel):
-    title: str
-    description: str
-    user_id: int
+# class TaskCreate(BaseModel):
+#     title: str
+#     description: str
+#     user_id: int
 
-class TaskStatus(BaseModel):
-    id: str
-    status: str
-    result: Optional[dict] = None
+# class TaskStatus(BaseModel):
+#     id: str
+#     status: str
+#     result: Optional[dict] = None
 
 @app.post("/create")
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
